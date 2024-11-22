@@ -9,5 +9,5 @@ public class ChatMessage {
     private String recipientId;    // Recipient's user ID
     private String content;        // Encrypted content
     private String timestamp;      // Timestamp of the message
-    private MessageStatus status;  // Status of the message (SENT, DELIVERED, READ)
+    private MessageStatus status;  // Status of the message (PENDING, SENT, DELIVERED, READ)
 }
