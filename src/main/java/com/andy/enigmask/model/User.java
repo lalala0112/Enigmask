@@ -1,4 +1,4 @@
-package com.andy.enigmask.user;
+package com.andy.enigmask.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +12,7 @@ public class User {
 
     @Id
     private String username;
+    private String password;
     private Status status;
 
 }
