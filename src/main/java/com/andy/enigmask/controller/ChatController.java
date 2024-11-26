@@ -1,48 +1,49 @@
 package com.andy.enigmask.controller;
 
 import com.andy.enigmask.model.ChatMessage;
+import com.andy.enigmask.model.ChatNotification;
 import com.andy.enigmask.model.MessageStatus;
 import com.andy.enigmask.service.ChatMessageService;
+import com.andy.enigmask.service.ChatRoomService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+@Controller
+@RequiredArgsConstructor
 public class ChatController {
-    private final SimpMessagingTemplate messagingTemplate;
+
     private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public ChatController(SimpMessagingTemplate messagingTemplate, ChatMessageService chatMessageService) {
-        this.messagingTemplate = messagingTemplate;
-        this.chatMessageService = chatMessageService;
-    }
-
-    @MessageMapping("/chat.sendMessage")
-    public void sendMessage(ChatMessage chatMessage) {
-        chatMessage.setStatus(MessageStatus.SENT);
+    public void processMessage(
+            @Payload ChatMessage chatMessage
+    ) {
         ChatMessage savedMessage = chatMessageService.saveMessage(chatMessage);
-
-        // Send the message to the recipient
-        messagingTemplate.convertAndSendToUser(savedMessage.getRecipientId(), "/queue/chat", savedMessage);
+        simpMessagingTemplate.convertAndSendToUser(
+                chatMessage.getRecipientId(), "/queue/messages",
+                ChatNotification.builder()
+                        .id(savedMessage.getId())
+                        .senderId(savedMessage.getSenderId())
+                        .recipientId(savedMessage.getRecipientId())
+                        .content(savedMessage.getContent())
+                        .build()
+        );
     }
 
-    @MessageMapping("/chat.markAsRead")
-    public void markMessagesAsRead(String senderId, String recipientId) {
-        chatMessageService.markMessagesAsRead(senderId, recipientId);
-        messagingTemplate.convertAndSendToUser(recipientId, "/queue/notifications", "Messages marked as read");
-    }
-
-    // Retrieve all messages between two users
-    @MessageMapping("/chat.getMessages")
-    public void getMessages(String senderId, String recipientId) {
-        List<ChatMessage> messages = chatMessageService.getMessagesBetweenUsers(senderId, recipientId);
-        messagingTemplate.convertAndSendToUser(senderId, "/queue/chat", messages);
-    }
-
-    // Get the count of unread messages
-    @MessageMapping("/chat.getUnreadCount")
-    public void getUnreadMessageCount(String senderId, String recipientId) {
-        long unreadCount = chatMessageService.countUnreadMessages(senderId, recipientId);
-        messagingTemplate.convertAndSendToUser(recipientId, "/queue/unreadCount", unreadCount);
+    @GetMapping("/messages/{senderId}/{recipientId}")
+    public ResponseEntity<List<ChatMessage>> findChatMessages(
+            @PathVariable("senderId") String senderId,
+            @PathVariable("recipientId") String recipientId
+    ) {
+        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
 }
