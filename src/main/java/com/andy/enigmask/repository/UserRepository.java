@@ -1,8 +1,7 @@
 package com.andy.enigmask.repository;
 
-import com.andy.enigmask.user.Status;
-import com.andy.enigmask.user.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.andy.enigmask.model.Status;
+import com.andy.enigmask.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
