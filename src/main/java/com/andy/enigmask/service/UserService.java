@@ -1,8 +1,8 @@
 package com.andy.enigmask.service;
 
 import com.andy.enigmask.repository.UserRepository;
-import com.andy.enigmask.user.Status;
-import com.andy.enigmask.user.User;
+import com.andy.enigmask.model.Status;
+import com.andy.enigmask.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
