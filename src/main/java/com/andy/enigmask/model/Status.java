@@ -1,4 +1,4 @@
-package com.andy.enigmask.user;
+package com.andy.enigmask.model;
 
 public enum Status {
     ONLINE,
