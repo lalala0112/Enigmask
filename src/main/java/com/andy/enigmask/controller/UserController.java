@@ -2,7 +2,9 @@ package com.andy.enigmask.controller;
 
 import com.andy.enigmask.service.UserService;
 import com.andy.enigmask.model.User;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @MessageMapping("/user.addUser")
-    @SendTo("/user/topic")
+    @SendTo("/user/topic/public")
     public User addUser(
             @Payload User user
     ) {
@@ -28,7 +30,7 @@ public class UserController {
     }
 
     @MessageMapping("/user.disconnectUser")
-    @SendTo("/user/topic")
+    @SendTo("/user/topic/public")
     public User disconnectUser(
             @Payload User user
     ) {

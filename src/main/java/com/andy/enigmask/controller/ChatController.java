@@ -4,12 +4,11 @@ import com.andy.enigmask.model.ChatMessage;
 import com.andy.enigmask.model.ChatNotification;
 import com.andy.enigmask.model.MessageStatus;
 import com.andy.enigmask.service.ChatMessageService;
-import com.andy.enigmask.service.ChatRoomService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

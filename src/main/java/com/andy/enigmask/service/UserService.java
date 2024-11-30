@@ -21,7 +21,7 @@ public class UserService {
 
     public void disconnectUser(User user) {
         var storedUser = userRepository
-                .findById(user.getUsername())
+                .findById(user.getNickname())
                 .orElse(null);
 
         if (storedUser != null) {

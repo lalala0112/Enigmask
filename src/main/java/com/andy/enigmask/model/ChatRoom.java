@@ -1,6 +1,7 @@
 package com.andy.enigmask.model;
 
 import lombok.*;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,4 +18,5 @@ public class ChatRoom {
     private String chatId;
     private String senderId;
     private String recipientId;
+
 }
