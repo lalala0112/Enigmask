@@ -1,14 +1,14 @@
 package com.andy.enigmask.repository;
 
 import com.andy.enigmask.model.ChatMessage;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
 
-    List<ChatMessage> findByChatId(String s);
+    List<ChatMessage> findByChatId(String chatId); // Find messages by chatId
 
 }

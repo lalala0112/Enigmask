@@ -2,9 +2,7 @@ package com.andy.enigmask.model;
 
 import lombok.*;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,16 +10,30 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document
+@Entity
+@Table(name = "chat_message")
 public class ChatMessage {
 
     @Id
-    private String id;                    // Unique identifier for the message
-    private String chatId;                //
-    private String senderId;              // Sender's user ID
-    private String recipientId;           // Recipient's user ID
-    private String content;               // Message content TODO: Encrypting content
-    private LocalDateTime timestamp;      // Timestamp of the message
-    private MessageStatus status;         // Status of the message (PENDING, SENT, DELIVERED, READ)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate primary key
+    private Long id;                    // Unique identifier for the message
 
+    @Column(name = "chat_id", nullable = false)
+    private String chatId;
+
+    @Column(name = "sender_id", nullable = false)
+    private String senderId;            // Sender's user ID
+
+    @Column(name = "recipient_id", nullable = false)
+    private String recipientId;         // Recipient's user ID
+
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;             // Message content TODO: Encrypting content
+
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;    // Timestamp of the message
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MessageStatus status;       // Status of the message (PENDING, SENT, DELIVERED, READ)
 }

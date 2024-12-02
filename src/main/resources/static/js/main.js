@@ -55,18 +55,26 @@ async function findAndDisplayConnectedUsers() {
     let connectedUsers;
 
     try {
-        connectedUsers = await connectedUsersResponse.json();
+        const responseData = await connectedUsersResponse.json();
+        console.log("Connected users response:", responseData);
+
+        // Handle the structure of the response
+        if (Array.isArray(responseData)) {
+            connectedUsers = responseData;
+        } else if (responseData.users && Array.isArray(responseData.users)) {
+            connectedUsers = responseData.users;
+        } else if (responseData.nickName) {
+            connectedUsers = [responseData];
+        } else {
+            connectedUsers = [];
+        }
+
     } catch (error) {
         console.error("Error parsing /users response:", error);
         return;
     }
 
-    // Check if the response is not an array
-    if (!Array.isArray(connectedUsers)) {
-        console.error("Error: connectedUsers is not an array. Received:", connectedUsers);
-        return;
-    }
-
+    // Display the connected users
     const filteredUsers = connectedUsers.filter(user => user.nickName !== nickname);
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';

@@ -2,21 +2,27 @@ package com.andy.enigmask.model;
 
 import lombok.*;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document
+@Entity
+@Table(name = "chat_rooms") // Matches the database table name
 public class ChatRoom {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
     private String id;
-    private String chatId;
-    private String senderId;
-    private String recipientId;
 
+    @Column(name = "chat_id", nullable = false)
+    private String chatId;
+
+    @Column(name = "sender_id", nullable = false)
+    private String senderId;
+
+    @Column(name = "recipient_id", nullable = false)
+    private String recipientId;
 }
