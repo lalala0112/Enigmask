@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "chat_rooms") // Matches the database table name
+@Table(name = "chat_rooms")
 public class ChatRoom {
 
     @Id
@@ -25,4 +25,5 @@ public class ChatRoom {
 
     @Column(name = "recipient_id", nullable = false)
     private String recipientId;
+
 }

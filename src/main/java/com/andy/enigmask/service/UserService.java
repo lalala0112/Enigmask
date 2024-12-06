@@ -28,12 +28,9 @@ public class UserService {
             storedUser.setStatus(Status.OFFLINE);
             userRepository.save(storedUser);
         }
-
     }
 
     public List<User> findConnectedUsers() {
-
         return userRepository.findAllByStatus(Status.ONLINE);
-
     }
 }

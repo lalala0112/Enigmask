@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-    // Custom query method to find users by their status
+    // find users by their status
     List<User> findAllByStatus(Status status);
 
 }
