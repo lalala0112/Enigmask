@@ -8,6 +8,9 @@ const messageInput = document.querySelector('#message');
 const connectingElement = document.querySelector('.connecting');
 const chatArea = document.querySelector('#chat-messages');
 const logout = document.querySelector('#logout');
+const registerForm = document.querySelector('#registerForm');
+const registerLink = document.querySelector('#register-link');
+const registerPage = document.querySelector('#register-page');
 
 let stompClient = null;
 let nickname = null;
@@ -30,22 +33,24 @@ function connect(event) {
     event.preventDefault();
 }
 
-
 function onConnected() {
     stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
-    stompClient.subscribe(`/user/public`, onMessageReceived);
+    stompClient.subscribe(`/user/topic/public`, onMessageReceived);
 
     // register the connected user
     stompClient.send("/app/user.addUser",
         {},
-        JSON.stringify({nickName: nickname, fullName: fullname, status: 'ONLINE'})
+        JSON.stringify({nickname: nickname, fullname: fullname, status: 'ONLINE'})
     );
+
     const connectedUserElement = document.querySelector('#connected-user-fullname');
+
     if (connectedUserElement) {
         connectedUserElement.textContent = fullname;
     } else {
         console.error("Error: The element '#connected-user-fullname' does not exist in the DOM.");
     }
+
     findAndDisplayConnectedUsers().then();
 }
 
@@ -95,7 +100,7 @@ function appendUserElement(user, connectedUsersList) {
     listItem.id = user.nickName;
 
     const userImage = document.createElement('img');
-    userImage.src = '../img/user_icon.png';
+    userImage.src = '../image/user_icon.png';
     userImage.alt = user.fullName;
 
     const usernameSpan = document.createElement('span');
@@ -150,9 +155,11 @@ async function fetchAndDisplayUserChat() {
     const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
     const userChat = await userChatResponse.json();
     chatArea.innerHTML = '';
+
     userChat.forEach(chat => {
         displayMessage(chat.senderId, chat.content);
     });
+
     chatArea.scrollTop = chatArea.scrollHeight;
 }
 
@@ -161,7 +168,6 @@ function onError() {
     connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
     connectingElement.style.color = 'red';
 }
-
 
 function sendMessage(event) {
     const messageContent = messageInput.value.trim();
@@ -212,7 +218,47 @@ function onLogout() {
     window.location.reload();
 }
 
+function jump_reg() {
+    usernamePage.classList.add('hidden');
+    registerPage.classList.remove('hidden');
+}
+
+function register(event) {
+    const nickname = document.querySelector('#r_nickname').value.trim();
+    const password = document.querySelector('#r_fullname').value.trim();
+    const confirmPassword = document.querySelector('#r2_fullname').value.trim();
+
+    if (password !== confirmPassword) {
+        alert('密碼不一致，請重新輸入。');
+        return;
+    }
+
+    fetch('/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nickname, password })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('註冊成功，請登入。');
+                registerPage.classList.add('hidden');
+                usernamePage.classList.remove('hidden');
+            }
+            else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('註冊出錯：', error);
+        });
+}
+
 usernameForm.addEventListener('submit', connect, true); // step 1
+registerLink.addEventListener('click', jump_reg, true);
+registerForm.addEventListener('submit', register, true);
 messageForm.addEventListener('submit', sendMessage, true);
 logout.addEventListener('click', onLogout, true);
 window.onbeforeunload = () => onLogout();
