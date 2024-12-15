@@ -16,6 +16,7 @@ let stompClient = null;
 let username = null;
 let password = null;
 let selectedUserId = null;
+let confirmPassword = null;
 
 function connect(event) {
     username = document.querySelector('#username').value.trim();
@@ -223,36 +224,33 @@ function jump_reg() {
 }
 
 function register(event) {
-    const nickname = document.querySelector('#r_nickname').value.trim();
-    const password = document.querySelector('#r_fullname').value.trim();
-    const confirmPassword = document.querySelector('#r2_fullname').value.trim();
+    username = document.querySelector('#r_nickname').value.trim();
+    password = document.querySelector('#r_fullname').value.trim();
+    confirmPassword = document.querySelector('#r2_fullname').value.trim();
 
     if (password !== confirmPassword) {
         alert('密碼不一致，請重新輸入。');
         return;
     }
 
-    fetch('/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nickname, password })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('註冊成功，請登入。');
-                registerPage.classList.add('hidden');
-                usernamePage.classList.remove('hidden');
-            }
-            else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('註冊出錯：', error);
+    const socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+
+    // 寫入資料庫
+    stompClient.connect({}, function() {
+        console.log('STOMP 連接成功，發送用戶註冊請求...');
+
+        stompClient.send("/app/user.addUser", {},
+            JSON.stringify({username: username, password: password}));
+
+        alert('註冊成功，請登入。');
+        registerPage.classList.add('hidden');
+        usernamePage.classList.remove('hidden');
+        }, function(error) {
+            console.error('STOMP 連接失敗: ', error);
+            alert('無法連接到伺服器，請稍後再試');
         });
+    event.preventDefault();
 }
 
 usernameForm.addEventListener('submit', connect, true); // step 1
