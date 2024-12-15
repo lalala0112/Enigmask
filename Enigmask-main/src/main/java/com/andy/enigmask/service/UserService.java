@@ -15,23 +15,21 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
     public void saveUser(User user) {
         user.setStatus(Status.ONLINE);
-        System.out.println("Attempting to save user: " + user.getNickname());
+        System.out.println("Attempting to save user: " + user.getUsername());
         try {
             userRepository.save(user);
-            System.out.println("User saved successfully: " + user.getNickname());
+            System.out.println("User saved successfully: " + user.getUsername());
         } catch (Exception e) {
             System.err.println("Error saving user: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    @Transactional
     public void disconnectUser(User user) {
         var storedUser = userRepository
-                .findById(user.getNickname())
+                .findById(user.getUsername())
                 .orElse(null);
 
         if (storedUser != null) {
@@ -43,4 +41,5 @@ public class UserService {
     public List<User> findConnectedUsers() {
         return userRepository.findAllByStatus(Status.ONLINE);
     }
+
 }

@@ -26,6 +26,7 @@ body {
 .user-form h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
+    margin-top: 10px;
     text-align: center;
 }
 
@@ -72,10 +73,8 @@ body {
 /* Chat Container Styling */
 .chat-container {
     display: flex;
-    max-width: 800px;
-    min-width: 800px;
-    min-height: 600px;
-    max-height: 600px;
+    width: 1050px;
+    height: 600px;
     margin: 20px;
     border: 1px solid #ccc;
     background-color: #fff;
@@ -85,9 +84,12 @@ body {
 }
 
 .users-list {
-    flex: 1;
+    width: 350px;
+
     border-right: 1px solid #ccc;
-    padding: 20px;
+    padding-left: 20px;
+    padding-top: 0;
+    padding-bottom: 20px;
     box-sizing: border-box;
     background-color: #34495e;
     color: #fff;
@@ -100,7 +102,11 @@ body {
 
 .users-list-container {
     height: 100%;
-    overflow-y: scroll;
+    width:300px;
+    /*overflow-y: scroll;*/
+    overflow: auto;  /* 超出範圍時才會出現捲軸 */
+    padding-right: 5px;
+    box-sizing: content-box;
 }
 
 .users-list h2 {
@@ -125,6 +131,8 @@ body {
     background-color: #cdebff;
     color: #4f4f4f;
     padding: 10px;
+    margin-left: 10px;
+    margin-right: 20px;
     border-radius: 5px;
 }
 
@@ -146,7 +154,7 @@ body {
 }
 
 .chat-area {
-    flex: 3;
+    width: 700px;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -163,7 +171,9 @@ body {
 #chat-messages {
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
+    overflow: auto;
+    flex-grow: 1;
 }
 
 .message p {
@@ -186,16 +196,18 @@ body {
     background-color: #34495e;
     color: #fff;
     align-self: flex-end;
+    margin: 15px;
 }
 
 .receiver {
     background-color: #ecf0f1;
     color: #333;
     align-self: flex-start;
+    margin: 15px;
 }
 
 .message-input {
-    margin-top: auto;
+    margin-top: 10px;
     display: flex;
 }
 
@@ -204,7 +216,7 @@ body {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .message-input input:focus {

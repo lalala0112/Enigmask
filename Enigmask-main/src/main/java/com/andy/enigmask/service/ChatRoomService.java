@@ -13,41 +13,42 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
 
-    public Optional<String> getChatRoomId(
-            String senderId,
-            String recipientId,
-            boolean createNewRoomIfNotExist
-    ) {
+    public Optional<String> getChatRoomId(String senderId, String recipientId, boolean createNewRoomIfNotExist) {
+        // Sort sender and recipient to ensure consistent query
+        String sortedSenderId = senderId.compareTo(recipientId) < 0 ? senderId : recipientId;
+        String sortedRecipientId = senderId.compareTo(recipientId) < 0 ? recipientId : senderId;
+
         return chatRoomRepository
-                .findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getId)
+                .findBySenderIdAndRecipientId(sortedSenderId, sortedRecipientId)
+                .map(ChatRoom::getChatId)
                 .or(() -> {
                     if (createNewRoomIfNotExist) {
-                        var chatId = createChatId(senderId, recipientId);
+                        var chatId = createChatId(sortedSenderId, sortedRecipientId);
                         return Optional.of(chatId);
                     }
                     return Optional.empty();
                 });
     }
 
+
     private String createChatId(String senderId, String recipientId) {
-        var chatId = String.format("%s_%s", senderId, recipientId);
+        // Sort sender and recipient to ensure consistent chatId
+        String sortedSenderId = senderId.compareTo(recipientId) < 0 ? senderId : recipientId;
+        String sortedRecipientId = senderId.compareTo(recipientId) < 0 ? recipientId : senderId;
+        String chatId = String.format("%s_%s", sortedSenderId, sortedRecipientId);
 
-        ChatRoom senderRecipient = ChatRoom.builder()
-                .chatId(chatId)
-                .senderId(senderId)
-                .recipientId(recipientId)
-                .build();
+        // Check if the chat already exists
+        if (chatRoomRepository.findBySenderIdAndRecipientId(sortedSenderId, sortedRecipientId).isEmpty()) {
+            ChatRoom chatRoom = ChatRoom.builder()
+                    .chatId(chatId)
+                    .senderId(sortedSenderId)
+                    .recipientId(sortedRecipientId)
+                    .build();
 
-        ChatRoom recipientSender = ChatRoom.builder()
-                .chatId(chatId)
-                .senderId(senderId)
-                .recipientId(recipientId)
-                .build();
-
-        chatRoomRepository.save(senderRecipient);
-        chatRoomRepository.save(recipientSender);
+            chatRoomRepository.save(chatRoom);
+        }
 
         return chatId;
     }
+
 }

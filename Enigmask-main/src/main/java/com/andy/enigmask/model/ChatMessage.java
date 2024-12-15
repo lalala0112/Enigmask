@@ -3,7 +3,7 @@ package com.andy.enigmask.model;
 import lombok.*;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "chat_message")
+@Table(name = "chat_messages")
 public class ChatMessage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate primary key
-    private String id;                    // Unique identifier for the message
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "chat_id", nullable = false)
     private String chatId;
@@ -31,9 +31,6 @@ public class ChatMessage {
     private String content;             // Message content TODO: Encrypting content
 
     @Column(name = "timestamp", nullable = false)
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private MessageStatus status;
 }
